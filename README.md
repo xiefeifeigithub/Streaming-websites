@@ -105,5 +105,60 @@
 > 3. Delete a comment: URL:/videos/:vid-id/comment/:comment-id Method:DELETE,SC:2O4,400,401,403,500
 > ```
 
+## 2.4 api之httphandler层设计
 
+> ```
+> API请求过程：handler->validation{1.request, 2.user}->business logic->response.
+> 1. data model
+> 2. error handling
+> 注意：
+> 1. 针对API请求过程对API请求采用分层架构的方式对其编写代码，可扩展、高可用、易于维护。
+> 2. 对于request的处理采用这种分层架构对于编写test case是很容易的，
+> 而且更能照顾到它的可扩展性，对工程上的效率也是非常高的。
+> ```
+
+## 2.5 api之数据库层设计
+
+```
+因为数据库模型的设计、数据库表的设计直接关系到最终业务逻辑的处理方式，所以首先对数据库层进行设计。
+```
+
+<img src="README.assets/image-20200415074349139.png" alt="image-20200415074349139" style="zoom:80%;" />
+
+### 2.5.1 表结构
+
+> ```mysql
+> CREATE TABLE `users` (
+>   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+>   `login_name` varchar(64) DEFAULT NULL,
+>   `pwd` text NOT NULL,
+>   PRIMARY KEY (`id`),
+>   UNIQUE KEY `login_name` (`login_name`)
+> ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+> 
+> CREATE TABLE `video_info` (
+>   `id` varchar(64) NOT NULL,
+>   `author_id` int(10) unsigned DEFAULT NULL,
+>   `name` text,
+>   `display_ctime` text,
+>   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+>   PRIMARY KEY (`id`)
+> ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+> 
+> CREATE TABLE `comments` (
+>   `id` varchar(64) NOT NULL,
+>   `video_id` varchar(64) DEFAULT NULL,
+>   `author_id` int(10) unsigned DEFAULT NULL,
+>   `content` text,
+>   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+>   PRIMARY KEY (`id`)
+> ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+> 
+> CREATE TABLE `sessions` (
+>   `session_id` varchar(64) NOT NULL,
+>   `TTL` tinytext,
+>   `login_name` varchar(64) DEFAULT NULL,
+>   PRIMARY KEY (`session_id`)
+> ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+> ```
 
