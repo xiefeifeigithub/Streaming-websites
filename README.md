@@ -162,3 +162,38 @@
 > ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 > ```
 
+## 2.6 api之Session
+
+> ```
+> 1. 什么是Session：在客户端和服务器端进行交互的时候，用的是http式的API或者是RESTful API,RESTful API有一个特点是：状态是不会保持的（Stateless），因此为了记录用户在服务端的状态，我们必须有一个东西来保存它，以完成一些功能。所有就需要用的Session。
+> 
+> 2. 为什么要用Session，如果不保存状态，则用户需要记录的一些东西就会丢掉，就比如不可能让用户在每个页面都进行登录操作。
+> 
+> 3. session和cookie的区别：session是一种在服务端为用户保存状态的机制，cookie是一种在客户端为用户保存状态的机制。一般在cookie端保存session_id，方便在用户对web进行操作的时候通过cookie端保存的session_id找到用户在服务端的状态。
+> 
+> 4. 本项目对session和cookie只进行最简单的应用，session只用来保存用户的登录状态，cookie只用来保存session_id, 在用户登录的时候，如果server端有该用户的session_id，则之后的操作都是可授权的，若没有session_id,则需要重新登录。
+> ```
+
+### 2.6.1 Session时序图
+
+<img src="README.assets/image-20200415211516870.png" alt="image-20200415211516870"  />
+
+```
+注意：
+1. 系统初始化时，系统会自动从DB中get到所有的session_id到Cache中。
+
+2. 当更新用的session时，不仅要往Cache里写，还要往DB里写。这是因为DB在网页访问量、并发量比较大的时候，其读写压力是很大的，这就需要我们减少对DB的操作，因此用Cache缓解DB压力。
+
+3. session不在我们的业务逻辑中，它是一个系统的逻辑，所以在编写代码时需要把session单独拎出来单独放到一个folder里。因为我们每一个request，除了登录和注册以外，每一个request都需要和session相关。
+```
+
+### 2.6.2 Session的主要操作
+
+```
+1. 系统初始化时，系统会自动从DB中get到所有的session_id到Cache中。
+
+2. 当有用户注册的时候，需要给该用户分配一个session_id，因此需要一个专门产生session的方法。
+
+3. 当校验的时候，session可能会过期，因此在检查session时会给其返回一个是否过期的状态标志。
+```
+

@@ -20,3 +20,8 @@ type Comment struct {
 	Author string `json:"author"`
 	Content string
 }
+
+type SimpleSession struct {
+	Username string // login_name
+	TTL int64 // session过期时间
+}
