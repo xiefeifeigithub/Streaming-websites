@@ -28,4 +28,7 @@ API请求过程：handler->validation{1.request, 2.user}->business logic->respon
 2. error handling
 注意：对于request的处理采用这种分层架构对于编写test case是很容易的，
 而且更能照顾到它的可扩展性，对工程上的效率也是非常高的。
+
+前端
+main->middleware->defs(message, err)->handlers->dbops->response
  */
