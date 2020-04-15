@@ -1,10 +1,10 @@
 package dbops
 
-import "database/sql"
+import (
+	_ "database/sql"
+	_ "github.com/go-sql-driver/mysql"
+)
 
-func openConn() *sql.DB {
-
-}
 
 func AddUserCredential(loginName string, pwd string) error {
 
