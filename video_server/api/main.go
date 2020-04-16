@@ -5,6 +5,23 @@ import (
 	"net/http"
 )
 
+type middleWareHandler struct {
+	r *httprouter.Router
+}
+
+func NewMiddleWareHandler(r *httprouter.Router) http.Handler {
+	m := middleWareHandler{}
+	m.r = r
+	return m
+}
+
+func (m middleWareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// check session
+	ValidateUserSession(r)
+	m.r.ServeHTTP(w, r)
+}
+
+
 func RegisterHandlers() *httprouter.Router {
 	router := httprouter.New()
 
@@ -16,7 +33,8 @@ func RegisterHandlers() *httprouter.Router {
 
 func main() {
 	r := RegisterHandlers()
-	http.ListenAndServe(":8000", r)
+	mh := NewMiddleWareHandler(r)
+	http.ListenAndServe(":8000", mh)
 }
 
 /*
@@ -29,6 +47,6 @@ API请求过程：handler->validation{1.request, 2.user}->business logic->respon
 注意：对于request的处理采用这种分层架构对于编写test case是很容易的，
 而且更能照顾到它的可扩展性，对工程上的效率也是非常高的。
 
-前端
-main->middleware->defs(message, err)->handlers->dbops->response
+流程
+main->middleware(校验、鉴权、流控等httpmiddleware)->defs(message, err)->handlers->dbops->response
  */
