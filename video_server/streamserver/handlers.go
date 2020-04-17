@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// 将本地的文件以stream的形式传到client端
 func streamHandler(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	vid := p.ByName("vid-id")
 	vl := VIDEO_DIR + vid
