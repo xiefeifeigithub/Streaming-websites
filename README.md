@@ -241,7 +241,7 @@
 > // 构造函数
 > func NewConnLimiter(cc int)  *ConnLimiter {
 > 	return &ConnLimiter{
-> 		concurrentConn: cc,
+>         concurrentConn: cc,
 > 		bucket:         make(chan int, cc), // channel缓冲区
 > 	}
 > }
@@ -262,3 +262,28 @@
 > }
 > ```
 
+# Scheduler
+
+> ```
+> Scheduler顾名思义：调度器，调度无法通过RESTAPI无法马上有结果的任务，这些任务都会分发到scheduler里面，通过定时或延时触发。也就是说，通常scheduler用来处理异步任务。 
+> ```
+
+## 4.1 Scheduler包含什么
+
+> ```
+> 1. RESTful的http server：用来接收任务，将任务写入scheduler。
+> 2. Timer:定时器
+> 3. 生产者/消费者模型下的task runner：用来处理读取和执行两个任务。
+> ```
+
+### 4.1.1 Scheduler架构概览
+
+> ```
+> 1. 大的框架由Timer来启动。 
+> 2. Timer里面有一个task runner。
+> 3. task runner由三部分组成：Dispatcher、Executor、channel。Dispatcher会将读取到的任务通过channel发送给Executor，然后由Executor负责执行任务。
+> ```
+
+
+
+![image-20200417160617109](README.assets/image-20200417160617109.png)
